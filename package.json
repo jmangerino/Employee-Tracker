@@ -1,0 +1,22 @@
+{
+    "name": "employee-tracker",
+    "version": "1.0.0",
+    "description": "a command-line application to manage a company's database",
+    "main": "server.js",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "start": "node index.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/jmangerino/Employee-Tracker"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "console.table": "^0.10.0",
+        "dotenv": "^16.0.1",
+        "inquirer": "^9.0.0",
+        "mysql2": "^2.3.3"
+    }
+}
