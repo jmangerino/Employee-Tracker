@@ -3,6 +3,7 @@ const mysql = require('mysql2');
 const inquirer = require('inquirer');
 const cTable = require('console.table');
 const { createConnection } = require('net');
+const { allowedNodeEnvironmentFlags } = require('process');
 
 // requiring the env file for confidential information
 require('dotenv').config();
@@ -33,8 +34,38 @@ const promptUser = () => {
                 'add a department',
                 'add a role',
                 'add an employee',
-                'and update and employee role'
+                'and update an employee role'
             ]
         }
-    ])
+    ]) .then(answers) => {
+        switch (answers.options) {
+            case "view all departments":
+                showDepartment()
+                break
+
+            case "view all roles":
+                showRoles()
+                break
+
+            case "view all employess":
+                showEmployess()
+                break
+
+            case "add a department":
+                addDepartment()
+                break
+
+            case 'add a role':
+                addRole()
+                break
+
+            case 'add an employee':
+                addEmployee()
+                break
+
+            case 'and update an employee role':
+                updateRole()
+                break
+            }
+    }
 }
