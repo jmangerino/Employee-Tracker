@@ -37,7 +37,7 @@ const promptUser = () => {
                 'and update an employee role'
             ]
         }
-    ]) .then(answers) => {
+    ]) .then(answers => {
         switch (answers.options) {
             case 'view all departments':
                 showDepartment()
@@ -67,7 +67,7 @@ const promptUser = () => {
                 updateRole()
                 break
             }
-    }
+    })
 };
 
 // showing the department table
@@ -85,7 +85,7 @@ showDepartment = () => {
 showRoles = () => {
     let allRoles = `SELECT * FROM role`;
     connection.query(allRoles, (err, resutls) => {
-        if (err) throw;
+        if (err) throw err;
         console.log('/n');
         console.table(resutls);
         promptUser();
@@ -96,7 +96,7 @@ showRoles = () => {
 showEmployess = () => {
     let allEmployess = `SELECT * FROM employee`;
     connection.query(allEmployess, (err, resutls) => {
-        if (err) throw;
+        if (err) throw err;
         console.log('/n');
         console.table(resutls);
         promptUser();
