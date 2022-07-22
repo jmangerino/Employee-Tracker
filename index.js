@@ -15,7 +15,7 @@ const connection = mysql.createConnection({
     database: 'employee_db'
 });
 
-Connection.connect(err => {
+connection.connect(err => {
     if (err) throw err;
     promptUser();
 });
