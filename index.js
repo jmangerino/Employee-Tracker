@@ -34,7 +34,8 @@ const promptUser = () => {
                 'add a department',
                 'add a role',
                 'add an employee',
-                'and update an employee role'
+                'update an employee role',
+                'quit'
             ]
         }
     ]) .then(answers => {
@@ -63,8 +64,12 @@ const promptUser = () => {
                 addEmployee()
                 break
 
-            case 'and update an employee role':
+            case 'update an employee role':
                 updateRole()
+                break
+
+            case 'quit':
+                quitProgram()
                 break
             }
     })
@@ -113,10 +118,12 @@ addDepartment = () => {
         },
     ])
     .then(answers => {
-        let addDept = `INSERT INTO department (name) VALUES (?)`;
+        let addDept = `INSERT INTO department (department_name) VALUES (?)`;
         connection.query(addDept, answers.deptName, (err, resutls) => {
             if (err) throw err;
             console.log(`Added ${answers.deptName} to departments`);
+
+            promptUser();
         })
     })
 };
@@ -138,7 +145,7 @@ addRole = () => {
     .then(answers => {
         const params = [answers.role, answers.salary];
 
-        const roleTable = `SELECT name, id FROM department`;
+        const roleTable = `SELECT department_name, id FROM department`;
         connection.query(roleTable, (err, resutls) => {
             if (err) throw err;
 
@@ -203,7 +210,7 @@ addEmployee = () => {
                 const role = roleChoice.role;
                 params.push(role);
 
-                const managerSql = `SELECET * FROM employee`;
+                const managerSql = `SELECT * FROM employee`;
                 connection.query(managerSql, (err, resutls) => {
                     if (err) throw err;
 
@@ -221,7 +228,7 @@ addEmployee = () => {
                         const manager = managerChoice.manager;
                         params.push(manager);
 
-                        const sql = `INSERT INTO employee (first_name, last_name, role,id, manager_id) VALUES (?, ?, ?, ?)`;
+                        const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`;
                         connection.query(sql, params, (err, resutls) => {
                             if (err) throw err;
                             console.log('employee added');
@@ -233,4 +240,63 @@ addEmployee = () => {
             })
         })
     })
+};
+
+updateRole = () => {
+    const employeeSql = `SELECT * FROM employee`;
+    connection.query(employeeSql, (err, resutls) => {
+        if (err) throw err;
+        
+        const employees = resutls.map(({ id, first_name, last_name }) => ({ name: first_name + " "+ last_name, value: id }));
+
+        inquirer.prompt([
+            {
+                name: 'name',
+                type: 'list',
+                message: "Which employee's role do you want to update?",
+                choices: employees
+            },
+        ])
+        .then(employeeChoice => {
+            const employee = employeeChoice.name;
+            const params = [];
+            params.push(employee);
+
+            const roleSql = `SELECT * FROM role`;
+            connection.query(roleSql, (err, resutls) => {
+                if (err) throw err;
+                
+                const roles = resutls.map(({ id, title }) => ({ name: title, value: id }));
+
+                inquirer.prompt([
+                    {
+                        name: 'role',
+                        type: 'list',
+                        message: "What is the employee's new role?",
+                        choices: roles
+                    },
+                ])
+                .then(roleChoice => {
+                    const role = roleChoice.role;
+                    params.push(role);
+
+                    let employee = params[0]
+                    params[0] = role
+                    params[1] = employee
+
+                    const sql = `UPDATE employee SET role_id = ? WHERE id = ?`;
+                    connection.query(sql, params, (err, resutls) => {
+                        if (err) throw err;
+                        console.log("employee's role has been updated")
+
+                        promptUser();
+                    })
+                })
+            })
+        })
+    })
+};
+
+const quitProgram = () => {
+    connection.end()
 }
