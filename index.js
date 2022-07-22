@@ -102,3 +102,66 @@ showEmployess = () => {
         promptUser();
     })
 };
+
+// adding a department
+addDepartment = () => {
+    inquirer.prompt([
+        {
+            name: 'deptName',
+            type: 'input',
+            message: 'What department do you want to add?'
+        },
+    ])
+    .then(answers => {
+        let addDept = `INSERT INTO department (name) VALUES (?)`;
+        connection.query(addDept, answers.deptName, (err, resutls) => {
+            if (err) throw err;
+            console.log(`Added ${answers.deptName} to departments`);
+        })
+    })
+};
+
+// adding a role
+addRole = () => {
+    inquirer.prompt([
+        {
+            name: 'role',
+            type: 'input',
+            message: 'What role would you like to add?'
+        },
+        {
+            name: 'salary',
+            type: 'input',
+            message: 'What is the salary for the role?'
+        },
+    ])
+    .then(answers => {
+        const params = [answers.role, answers.salary];
+
+        const roleTable = `SELECT name, id FROM department`;
+        connection.query(roleTable, (err, resutls) => {
+            if (err) throw err;
+
+            const dept = data.map(({ name, id }) => ({ name: name, value: id }));
+
+            inquirer.prompt([
+                {
+                    name: 'dept',
+                    type: 'list',
+                    message: 'What department is this role in',
+                    choices: dept
+                },
+            ])
+            . then(deptChoice => {
+                const dept = deptChoice.dept;
+                params.push(dept);
+
+                const sql = `INSERT INTO role (title, salary, department_id) Values (?, ?, ?)`;
+                connection.query(sql, params, (err, resutls) => {
+                    if (err) throw err;
+                    console.log(`Added ${answers.role} to roles`);
+                });
+            })
+        })
+    })
+};
