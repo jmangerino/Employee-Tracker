@@ -2,25 +2,25 @@
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 const cTable = require('console.table');
-const { createConnection } = require('net');
-const { allowedNodeEnvironmentFlags } = require('process');
+
 
 // requiring the env file for confidential information
 require('dotenv').config();
 
 // creating the connection to mysql database
-const connectino = mysql.createConnection({
+const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: process.env.DB_PASSWORD,
     database: 'employee_db'
 });
 
-createConnection.connect(err => {
+Connection.connect(err => {
     if (err) throw err;
     promptUser();
 });
 
+// using inquirer to prompt the options in the command line for the user to pick
 const promptUser = () => {
     inquirer.prompt ([
         {
@@ -39,19 +39,19 @@ const promptUser = () => {
         }
     ]) .then(answers) => {
         switch (answers.options) {
-            case "view all departments":
+            case 'view all departments':
                 showDepartment()
                 break
 
-            case "view all roles":
+            case 'view all roles':
                 showRoles()
                 break
 
-            case "view all employess":
+            case 'view all employess':
                 showEmployess()
                 break
 
-            case "add a department":
+            case 'add a department':
                 addDepartment()
                 break
 
@@ -68,4 +68,37 @@ const promptUser = () => {
                 break
             }
     }
-}
+};
+
+// showing the department table
+showDepartment = () => {
+    let allDepartments = `SELECT * FROM department`
+    connection.query(allDepartments, (err, resutls) => {
+        if (err) throw err;
+        console.log('/n')
+        console.table(resutls);
+        promptUser();
+    })
+};
+
+// showing the roles table
+showRoles = () => {
+    let allRoles = `SELECT * FROM role`;
+    connection.query(allRoles, (err, resutls) => {
+        if (err) throw;
+        console.log('/n');
+        console.table(resutls);
+        promptUser();
+    })
+};
+
+// showing the employees table
+showEmployess = () => {
+    let allEmployess = `SELECT * FROM employee`;
+    connection.query(allEmployess, (err, resutls) => {
+        if (err) throw;
+        console.log('/n');
+        console.table(resutls);
+        promptUser();
+    })
+};
