@@ -75,7 +75,7 @@ showDepartment = () => {
     let allDepartments = `SELECT * FROM department`
     connection.query(allDepartments, (err, resutls) => {
         if (err) throw err;
-        console.log('/n')
+        console.log(`/n`)
         console.table(resutls);
         promptUser();
     })
@@ -86,7 +86,7 @@ showRoles = () => {
     let allRoles = `SELECT * FROM role`;
     connection.query(allRoles, (err, resutls) => {
         if (err) throw err;
-        console.log('/n');
+        console.log(`/n`);
         console.table(resutls);
         promptUser();
     })
@@ -97,7 +97,7 @@ showEmployess = () => {
     let allEmployess = `SELECT * FROM employee`;
     connection.query(allEmployess, (err, resutls) => {
         if (err) throw err;
-        console.log('/n');
+        console.log(`/n`);
         console.table(resutls);
         promptUser();
     })
